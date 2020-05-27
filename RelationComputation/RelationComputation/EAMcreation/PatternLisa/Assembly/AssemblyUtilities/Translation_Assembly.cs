@@ -95,7 +95,8 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 
             while (i < (numOfCompOnThisPath - 1) && exit == false) //fino alla penultima RE
             {
-               if (Part.PartUtilities.GeometryAnalysis.IsTranslationTwoRE(listOfREOnThePath[i], listOfREOnThePath[i + 1]))
+                if(true)
+               //if (Part.PartUtilities.GeometryAnalysis.IsTranslationTwoRE(listOfREOnThePath[i], listOfREOnThePath[i + 1]))
                 {
                     listOfREOfNewMyPattern.Add(listOfREOnThePath[i + 1]);
                     listOfComponetsOfNewMyPattern.Add(listOfComponentsOnThePath[i+1]);

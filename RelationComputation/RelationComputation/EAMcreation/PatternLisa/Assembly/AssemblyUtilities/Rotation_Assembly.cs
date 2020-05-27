@@ -142,7 +142,8 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                 //whatToWrite = string.Format("         Confronto {0}^ RE e la {1}^ RE: ", i, i + 1);
                 //KLdebug.Print(whatToWrite, nameFile);
 
-                if (Part.PartUtilities.GeometryAnalysis.IsRotationTwoRE(listOfREOnThePath[i], listOfREOnThePath[i + 1], teta, axisDirection, pathObject.circumcenter))
+                if (true)
+                //if (Part.PartUtilities.GeometryAnalysis.IsRotationTwoRE(listOfREOnThePath[i], listOfREOnThePath[i + 1], teta, axisDirection, pathObject.circumcenter))
                 {
                     listOfREOfNewMyPattern.Add(listOfREOnThePath[i + 1]);
                     listOfComponetsOfNewMyPattern.Add(listOfComponentsOnThePath[i + 1]);
