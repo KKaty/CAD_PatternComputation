@@ -238,8 +238,9 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             #endregion
 
             var numberOfVerticesIsOk = true;
-            var checkOfVertices = CheckOfVerticesForTranslation(firstMyRepeatedEntity, secondMyRepeatedEntity,
-                candidateTranslationArray, ref numberOfVerticesIsOk);
+            //var checkOfVertices = CheckOfVerticesForTranslation(firstMyRepeatedEntity, secondMyRepeatedEntity,
+            //    candidateTranslationArray, ref numberOfVerticesIsOk);
+            var checkOfVertices = true;
             if (numberOfVerticesIsOk)
             {
                 if (checkOfVertices == false)
@@ -256,7 +257,8 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             //KLdebug.Print(" ", nameFile);
 
             //Check of correct position of normals of all Planar face:
-            if (!CheckOfPlanesForTranslation(firstMyRepeatedEntity, secondMyRepeatedEntity))
+            if(true)
+            //if (!CheckOfPlanesForTranslation(firstMyRepeatedEntity, secondMyRepeatedEntity))
             {
                 return false;
             }

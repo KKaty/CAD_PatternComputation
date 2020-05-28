@@ -116,7 +116,8 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
                     }
                     else
                     {
-                        if (IsReflectionTwoRE(ListOfREOnThisSurface[0], ListOfREOnThisSurface[1], null))
+                        if(false)
+                        //if (IsReflectionTwoRE(ListOfREOnThisSurface[0], ListOfREOnThisSurface[1], null))
                         {
                             fileOutput.AppendLine("Le due RE sono legate da RIFLESSIONE!");
                             var listOfPathOfCentroids = new List<MyPathOfPoints>();

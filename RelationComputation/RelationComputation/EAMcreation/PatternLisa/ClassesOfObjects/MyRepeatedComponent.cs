@@ -52,7 +52,7 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
             this.IsLeaf = isLeaf;
       
             var originVertex = new MyVertex(transform.TranslationVector[0], transform.TranslationVector[1],
-                transform.TranslationVector[2]);
+               transform.TranslationVector[2]);
           
                 
             this.Origin = originVertex;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
@@ -179,36 +180,35 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
             //const string nameFile = "GetTranslationalPatterns.txt";
             //KLdebug.Print("     ---> UpdateListOfMyMatrAdj", nameFile);
 
-            
+
             //KLdebug.Print("indOfThisCentroid nella lista di tutti i centroids in GS: " + indOfThisCentroid, nameFile);
             //KLdebug.Print(" AGGIORNO TUTTE LE MATRADJ mandando a 0 le entrate corrispondenti al centroid della current RE:", nameFile);
             //KLdebug.Print(" Numero di MatrAdj nella lista: " + listOfMatrAdj.Count, nameFile);
-
             if (listOfMatrAdj.Count > 0)
             {
+                //Console.WriteLine("lista adiaenze " + listOfMatrAdj[0].matr.GetLength(1));
+
                 var matrAdjDim = listOfMatrAdj[0].matr.GetLength(1);
                 foreach (var matrAdj in listOfMatrAdj)
                 {
-                    //KLdebug.Print(" MatrAdj position: " + listOfMatrAdj.IndexOf(matrAdj), nameFile);
-                    //KLdebug.Print(" d della MatrAdj: " + matrAdj.d, nameFile);
-                    //KLdebug.Print(" nOccur prima dell'aggiornamento: " + matrAdj.nOccur, nameFile);
+                    //Console.WriteLine(" MatrAdj position: " + listOfMatrAdj.IndexOf(matrAdj));
+                    //Console.WriteLine(" d della MatrAdj: " + indOfThisCentroid);
+                    //Console.WriteLine(" nOccur prima dell'aggiornamento: " + matrAdj.matr.Length);
 
 
                     for (int i = 0; i < matrAdjDim; i++)
                     {
                         if (matrAdj.matr[indOfThisCentroid, i] != 0)
                         {
-                            KLdebug.Print(" ", nameFile);
-
                             matrAdj.matr[indOfThisCentroid, i] = 0;
-                            //KLdebug.Print(" porto a 0 l'entrata (" + indOfThisCentroid + "," + i + ")" , nameFile);
+                            //Console.WriteLine(" porto a 0 l'entrata (" + indOfThisCentroid + "," + i + ")");
                             matrAdj.matr[i, indOfThisCentroid] = 0;
-                           // KLdebug.Print(" porto a 0 l'entrata (" + i + "," + indOfThisCentroid + ")", nameFile);
+                            //Console.WriteLine(" porto a 0 l'entrata (" + i + "," + indOfThisCentroid + ")");
                             matrAdj.nOccur -= 1;
                         }
                     }
 
-                    //KLdebug.Print(" nOccur dopo dell'aggiornamento: " + matrAdj.nOccur, nameFile);
+                    //Console.WriteLine(" nOccur dopo dell'aggiornamento: " + matrAdj.nOccur);
                     //KLdebug.Print(" ", nameFile);
 
                 }

@@ -96,7 +96,7 @@ namespace RelationComputation
             Console.WriteLine("Pattern trovati " + listPattern.Count);
             foreach (var patt in listPattern)
             {
-                Console.WriteLine("Pattern di " + patt.listOfMyRCOfMyPattern.First().Name);
+                Console.WriteLine("Pattern di tipo " + patt.typeOfMyPattern + " formato da " + patt.listOfMyRCOfMyPattern.First().Name);
             }
 
 

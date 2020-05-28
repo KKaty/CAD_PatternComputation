@@ -176,7 +176,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             //The constant distance is the distance between the origin of the coordinate systems
             //(it is computed by computing the Euclidean norm of the difference vector between 
             // two origins).
-            var numOfComponents = listOfComponents.Count;
+            var numOfComponents = listOfVertexOrigins.Count;
             //var listOfVertexOrigins = listOfComponents.Select(component2 => component2.Origin).ToList();
 
             //foreach (MyVertex origin in listOfVertexOrigins)
@@ -278,7 +278,8 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                     }
                     else
                     {
-                        if (Part.PartUtilities.GeometryAnalysis.IsReflectionTwoRE(listOfComponents[0].RepeatedEntity, listOfComponents[1].RepeatedEntity, swApplication))
+                        if(false)
+                        //if (Part.PartUtilities.GeometryAnalysis.IsReflectionTwoRE(listOfComponents[0].RepeatedEntity, listOfComponents[1].RepeatedEntity, swApplication))
                         {
                             //fileOutput.AppendLine("Le due COMPONENTI sono legate da RIFLESSIONE!");
                             var listOfPathOfCentroids = new List<MyPathOfPoints>();

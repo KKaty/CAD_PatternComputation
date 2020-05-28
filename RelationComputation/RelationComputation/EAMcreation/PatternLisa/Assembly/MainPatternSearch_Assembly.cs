@@ -173,7 +173,25 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
                 //swApplication.SendMsgToUser("Calcolo pattern " + listOfComponents[0].Name + "\ncomponenti " + listOfComponents.Count);
                 if (listCentroidWordRF.Count == listOfComponents.Count)
                 {
-                    AssemblyPatterns.KLFindPatternsOfComponents(listOfComponents, listCentroidWordRF,
+
+                    var newListOfComponetsNoInfo = new List<MyRepeatedComponent>();
+
+                    foreach (var comp in listOfComponents)
+                    {
+                        var newComp = new MyRepeatedComponent();
+                        var newRE = new MyRepeatedEntity();
+                        newRE.centroid = comp.Origin;
+                        newComp.Origin = comp.Origin;
+                        newComp.Name = comp.Name;
+                        newComp.IdCorrespondingNode = comp.IdCorrespondingNode; 
+                        newComp.RepeatedEntity = newRE;
+                        
+                       
+                        newListOfComponetsNoInfo.Add(newComp);
+                    }
+
+
+                    AssemblyPatterns.KLFindPatternsOfComponents(newListOfComponetsNoInfo, listCentroidWordRF,
                         ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, swApplication, ref fileOutput);
                     
                 }
@@ -403,7 +421,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
             // Aggiunto calcolo dell'entità ripetuta alla parte.
             var currentModel = component2.GetModelDoc2();
             var entityList =
-                (List<Entity>) AssemblyTraverse.KL_GetPartFaces(currentModel, component2.Name2,
+                (List<Entity>)AssemblyTraverse.KL_GetPartFaces(currentModel, component2.Name2,
                     swApplication);
 
             double[,] compositionMatrixOfComponentPart =
@@ -430,14 +448,19 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
                     {0.0, 0.0, 0.0, 1}
                 };
 
-            //swApplication.SendMsgToUser("Calcolo repeated entity di " + component2.Name2 + "\nnumero facce " + entityList.Count);
             MyRepeatedEntity newRepeatedEntity = ExtractInfoFromBRep.KLBuildRepeatedEntity(
                 entityList, indexRepEntity, compositionMatrixOfComponentPart, swApplication);
-            //swApplication.SendMsgToUser("Ha " + newRepeatedEntity.listOfVertices.Count + " vertici\n" + newRepeatedEntity.listOfAddedVertices.Count + " vertici aggiunti");
+
+            //var newRepeatedEntity = new MyRepeatedEntity();
+            //newRepeatedEntity.idRE = indexRepEntity;
 
             // Fine calcolo entità rip da aggiungere alla componente.
             var newMyComponent = new MyRepeatedComponent(component2, idCorrespondingNode, newRelativeTransformMatrix, newIsLeaf,
                 newRepeatedEntity);
+
+            //var newMyComponent = new MyRepeatedComponent(component2, idCorrespondingNode, null, newIsLeaf,
+            //    newRepeatedEntity);
+
             return newMyComponent;
         }
 

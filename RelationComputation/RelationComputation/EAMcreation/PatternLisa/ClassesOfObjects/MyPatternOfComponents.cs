@@ -21,6 +21,7 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
         [JsonProperty("Centroid")]
         public MyVertex patternCentroid = new MyVertex();
 
+        public string name = "";
         public MyPatternOfComponents()
         {
         }
