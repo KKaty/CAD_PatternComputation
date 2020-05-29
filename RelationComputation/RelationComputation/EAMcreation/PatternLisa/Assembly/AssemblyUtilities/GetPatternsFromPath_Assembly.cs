@@ -163,7 +163,10 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             List<MyVertex> listOfOrigins, ref List<MyMatrAdj> listOfMatrAdj,
             ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, SldWorks swApplication)
         {
+            // Se non uso listOfComponentsOnThePath probabilmente dovrò aggiornare listOfOrigins con il numero effettivo di elementi che appartengono al pattern selezionato.
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
+            //var numOfCompOnThisPath = listOfOrigins.Count;
+
             var noStop = true;
 
             //const string nameFile = "GetTranslationalPatterns.txt";

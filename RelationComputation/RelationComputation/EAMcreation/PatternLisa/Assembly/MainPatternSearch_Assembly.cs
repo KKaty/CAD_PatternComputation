@@ -191,6 +191,12 @@ namespace AssemblyRetrieval.PatternLisa.Assembly
                     }
 
 
+
+                    //Console.WriteLine("Centroidi");
+                    //foreach (var c in listCentroidWordRF)
+                    //{
+                    //    Console.WriteLine(String.Format("C: {0} {1} {2}", c.x, c.y, c.z));
+                    //}
                     AssemblyPatterns.KLFindPatternsOfComponents(newListOfComponetsNoInfo, listCentroidWordRF,
                         ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, swApplication, ref fileOutput);
                     
