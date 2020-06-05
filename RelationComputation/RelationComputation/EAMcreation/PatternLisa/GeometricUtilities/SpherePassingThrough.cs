@@ -2,7 +2,6 @@
 using System.Text;
 using Accord.Math;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
 {
@@ -13,7 +12,7 @@ namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
         // le coordinate dei vertici sono numeri con al più 3 cifre dopo la virgola e 3 cifre prima della virgola.
         // Inoltre ho osservato che più aumenta la differenza tra l'ordine di grandezza tra tutte le coordinate dei vari
         // vertici e più diminuisce la precisione...o no???]
-        public static MySphere SpherePassingThrough(MyVertex V1, MyVertex V2, MyVertex V3, MyVertex V4, ref StringBuilder fileOutput, ModelDoc2 SwModel)
+        public static MySphere SpherePassingThrough(MyVertex V1, MyVertex V2, MyVertex V3, MyVertex V4, ref StringBuilder fileOutput)
         {
             //MySphere OutputMySphere = new MySphere();
             

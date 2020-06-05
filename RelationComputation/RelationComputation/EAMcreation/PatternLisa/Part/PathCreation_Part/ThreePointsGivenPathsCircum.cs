@@ -5,7 +5,6 @@ using System.Text;
 using Accord.Math;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.Part.PathCreation_Part
 {
@@ -16,7 +15,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PathCreation_Part
         public static List<int> ThreePointsGivenPathsCircum(MyMatrAdj MatrAdjToSee,
             List<MyVertex> ListCentroid, List<int> ListOfExtremePoints, int Point1,
             int Point2, int Point3, ref StringBuilder fileOutput, ref bool ToleranceOk,
-            out MyPathGeometricObject pathCurve, ModelDoc2 swModel = null, SldWorks swApplication = null)
+            out MyPathGeometricObject pathCurve)
         {
             List<int> Path = new List<int>();
 
@@ -25,7 +24,7 @@ namespace AssemblyRetrieval.PatternLisa.Part.PathCreation_Part
             Path.Add(Point3);
 
             MyCircumForPath CircumPath = FunctionsLC.CircumPassingThrough(
-                ListCentroid[Point1], ListCentroid[Point2], ListCentroid[Point3], ref fileOutput, swModel, swApplication);
+                ListCentroid[Point1], ListCentroid[Point2], ListCentroid[Point3], ref fileOutput);
 
              //procedo nella direzione Point2-Point3
                 fileOutput.AppendLine("Point3: " + Point3);

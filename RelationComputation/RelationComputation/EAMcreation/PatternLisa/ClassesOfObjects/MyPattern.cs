@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
 {
@@ -12,7 +11,6 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
         public string typeOfMyPattern;   // translation, reflection, rotation
         public double constStepOfMyPattern;
         public double angle = -1; //it is modified only in case of circular patterns
-        public List<Surface> listOfGroupingSurfaces;
         public MyVertex patternCentroid = new MyVertex();
 
         public MyPattern()
@@ -20,13 +18,12 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
         }
 
         public MyPattern(List<MyRepeatedEntity> ListOfMyREOfMyPattern, MyPathGeometricObject PathOfMyPattern, 
-            string TypeOfMyPattern, List<Surface> ListOfGroupingSurfaces)
+            string TypeOfMyPattern)
         {
             this.listOfMyREOfMyPattern = ListOfMyREOfMyPattern;
             this.pathOfMyPattern = PathOfMyPattern;
             this.typeOfMyPattern = TypeOfMyPattern;
             this.constStepOfMyPattern = ListOfMyREOfMyPattern[0].centroid.Distance(ListOfMyREOfMyPattern[1].centroid);
-            this.listOfGroupingSurfaces = ListOfGroupingSurfaces;
         }
     }
 }

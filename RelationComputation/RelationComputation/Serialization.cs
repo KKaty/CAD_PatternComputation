@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using QuickGraph;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.Utility
 {
@@ -78,7 +77,7 @@ namespace AssemblyRetrieval.Utility
         //    }
         //}
 
-        public static bool ReadJsonModel(string jsonFile, ref AdjacencyGraph<KLgraph.KLnode, KLgraph.KLedge> graph, SldWorks swApplication)
+        public static bool ReadJsonModel(string jsonFile, ref AdjacencyGraph<KLgraph.KLnode, KLgraph.KLedge> graph)
         {
             Type[] runtimeTypes = new Type[] { typeof(KLgraph.KLedgeJoint), typeof(KLgraph.KLedgeContact), typeof(KLgraph.KLedgeStructure) };
             JsonSerializerSettings settings = new JsonSerializerSettings
@@ -96,12 +95,12 @@ namespace AssemblyRetrieval.Utility
             
            if (deserializedGraph.Edges == null)
             {
-                swApplication.SendMsgToUser("DelegateNode graph nulli");
+                //swApplication.SendMsgToUser("DelegateNode graph nulli");
                 return false;
             }
             if (graph == null)
             {
-                swApplication.SendMsgToUser("Comparison nullo");
+                //swApplication.SendMsgToUser("Comparison nullo");
                 return false;
             }
             

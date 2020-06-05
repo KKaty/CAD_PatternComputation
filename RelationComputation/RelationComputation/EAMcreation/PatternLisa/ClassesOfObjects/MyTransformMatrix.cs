@@ -1,7 +1,6 @@
 ﻿using System;
 using Accord.Math;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
 {
@@ -80,24 +79,6 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
                 return hashCode;
             }
         }
-
-        //This function, once applied to a MyTransformMatrix, composes it with another given one.
-        public MyTransformMatrix ComposeTwoTransformMatrix(MyTransformMatrix other, SldWorks swApplication)
-        {
-            var outputMyTransformMatrix = new MyTransformMatrix();
-            if (other == null)
-            {
-                swApplication.SendMsgToUser("ERROR. Found null MyTransformMatrix.");
-                return outputMyTransformMatrix;
-            }
-            var outputRotMatrix = this.RotationMatrix.Multiply(other.RotationMatrix);
-            var outputTransVector = this.TranslationVector.Add(other.TranslationVector);
-            var outputScaleFactor = this.ScaleFactor * other.ScaleFactor;
-
-            outputMyTransformMatrix = new MyTransformMatrix(outputRotMatrix, outputTransVector, outputScaleFactor);
-            return outputMyTransformMatrix;
-        }
-
 
     }
 

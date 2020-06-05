@@ -5,36 +5,6 @@ namespace AssemblyRetrieval.PatternLisa.Part.PartUtilities
 {
     public partial class GeometryAnalysis
     {
-        //It detects all the symmetry relations in a set of MyRepeatedEntity 
-        //(symmetry types considered: translation, reflection,rotation)
-        //it saves patterns of length = 1 in a list;
-        //it saves patterns of length = 2 in a list;
-        //it saves patterns of length > 2 in a list.
-        //It returns TRUE if only one pattern has been detected and it has maximum length, FALSE otherwise.
-
-        public static void GetPatternsFromListOfPaths(List<MyPathOfPoints> listOfMyPathsOfCentroids,
-            List<MyRepeatedEntity> listOfREOnThisSurface, ref List<MyMatrAdj> listOfMatrAdj, 
-            ref List<MyGroupingSurface> listOfMyGroupingSurface, List<MyGroupingSurface> listOfInitialGroupingSurface,
-            ref List<MyPattern> listOfOutputPattern,
-            ref List<MyPattern> listOfOutputPatternTwo)
-        {
-            ReorderListOfPaths(ref listOfMyPathsOfCentroids);
-
-
-            while (listOfMyPathsOfCentroids.Count > 0)
-            {
-                var currentPathOfCentroids = new MyPathOfPoints(listOfMyPathsOfCentroids[0].path,
-                    listOfMyPathsOfCentroids[0].pathGeometricObject);
-                listOfMyPathsOfCentroids.RemoveAt(0);
-                //I remove it immediately so in the update phase there is not it in the listOfMyPathsOfCentroids
-
-                var maxLength = GetPatternsFromPath(currentPathOfCentroids,
-                    listOfREOnThisSurface, ref listOfMyPathsOfCentroids, ref listOfMatrAdj,
-                    ref listOfMyGroupingSurface, listOfInitialGroupingSurface, ref listOfOutputPattern,
-                    ref listOfOutputPatternTwo); 
-            }
-        }
-
         public static void ReorderListOfPaths(ref List<MyPathOfPoints> listOfMyPathsOfCentroids)
         {
             //const string nameFile = "ReorderTheListOfFoundPaths.txt";

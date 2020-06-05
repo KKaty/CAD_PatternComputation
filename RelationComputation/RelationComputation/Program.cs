@@ -5,12 +5,8 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
-using AssemblyRetrieval.EAMcreation;
-using AssemblyRetrieval.Graph;
 using Newtonsoft.Json;
 using QuickGraph;
-using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities;
 
@@ -18,7 +14,6 @@ namespace RelationComputation
 {
     class Program
     {
-        public static AdjacencyGraph<KLgraph.KLnode, KLgraph.KLedge> graph = new AdjacencyGraph<KLgraph.KLnode, KLgraph.KLedge>(true);
         static void Main(string[] args)
         {
             //Console.WriteLine("Starting..");
@@ -122,7 +117,7 @@ namespace RelationComputation
 
 
             AssemblyPatterns.KLFindPatternsOfComponents(newListOfComponetsNoInfo, listCentroidWordRF,
-                        ref listPattern, ref listPattern2, null, null, ref fileOutput);
+                        ref listPattern, ref listPattern2, ref fileOutput);
             //PatternComputationFunctions.GetAssemblyPatternsOfRepeatedElements(listOfMyListOfInstances, nodeAssembly,
             //    out listPattern, out listPattern2);
 

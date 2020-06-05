@@ -4,14 +4,11 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Accord.Math;
-using AssemblyRetrieval.EAMcreation;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 //using AssemblyRetrieval.Filter;
 //using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using Newtonsoft.Json;
 using QuickGraph;
-using SolidWorks.Interop.sldworks;
-using SolidWorks.Interop.swconst;
 using Matrix = Accord.Math.Matrix;
 
 //using Accord.Math;
@@ -182,7 +179,6 @@ namespace AssemblyRetrieval.Graph
             //[JsonIgnore]
             public int FatherId { get; set; }
 
-            [JsonIgnore] public Component2 Comp;
             [JsonIgnore] public Array Transformation;
 
 
@@ -190,14 +186,13 @@ namespace AssemblyRetrieval.Graph
             {
             }
 
-            public KLnode(int hashCode, Array transformation, string fatherName, int fatherId, Component2 comp,
+            public KLnode(int hashCode, Array transformation, string fatherName, int fatherId,
                 string name, string nameLastPart, string componentPath, int id, int componentType = (int)KLComponentType.NotAssigned)
             {
                 HashCode = hashCode;
                 Transformation = transformation;
                 FatherName = fatherName;
                 FatherId = fatherId;
-                Comp = comp;
                 Name = name;
                 NameLastPart = nameLastPart;
                 ComponentPath = componentPath;
@@ -231,10 +226,10 @@ namespace AssemblyRetrieval.Graph
             {
             }
 
-            public KLnodePart(int hashCode, Array transformation, string fatherName, int fatherId, Component2 comp,
+            public KLnodePart(int hashCode, Array transformation, string fatherName, int fatherId,
                 string name, string nameLastPart, string componentPath, int id,
                 KLstatisticPart kLstatistic, KLshapePart kLshape)
-                : base(hashCode, transformation, fatherName, fatherId, comp, name, nameLastPart, componentPath, id)
+                : base(hashCode, transformation, fatherName, fatherId, name, nameLastPart, componentPath, id)
             {
                 KLstatistic = kLstatistic;
                 KLshape = kLshape;
@@ -287,17 +282,14 @@ namespace AssemblyRetrieval.Graph
 
             [JsonProperty("KLlistPatternTwo")] public List<MyPatternOfComponents> KLlistPatternTwo = new List<MyPatternOfComponents>();
 
-            [JsonProperty("EquivalentNode")] public List<EquivalentNode> EquivalentNode = new List<EquivalentNode>();
-
-
             public KLnodeAssembly()
             {
             }
 
-            public KLnodeAssembly(int hashCode, Array transformation, string fatherName, int fatherId, Component2 comp,
+            public KLnodeAssembly(int hashCode, Array transformation, string fatherName, int fatherId,
                 string name, string nameLastPart, string componentPath, int id,
                 int childrenNumber, KLstatisticAssembly statistic, KLshapeAssembly shape)
-                : base(hashCode, transformation, fatherName, fatherId, comp, name, nameLastPart, componentPath, id)
+                : base(hashCode, transformation, fatherName, fatherId, name, nameLastPart, componentPath, id)
             {
                 ChildrenNumber = childrenNumber;
                 KLstatistic = statistic;
@@ -444,36 +436,7 @@ namespace AssemblyRetrieval.Graph
             }
         }
 
-        [JsonObject("KLedgeSyntesis")]
-        public class KLedgeSyntesis : KLedgeInterface
-        {
-            public KLedgeSyntesis(KLnode source, KLnode target, List<Face2> faces, KLdof dof, KLcontactType contacType,
-                int id)
-                : base(source, target, dof, contacType, id)
-            {
-            }
-        }
-
-        [JsonObject("KLedgeMainPart")]
-        public class KLedgeMainPart : KLedgeInterface
-        {
-            public KLedgeMainPart(KLnode source, KLnode target, List<Face2> faces, KLdof dof, KLcontactType contacType,
-                int id)
-                : base(source, target, dof, contacType, id)
-            {
-            }
-        }
-
-        [JsonObject("KLedgeMechanism")]
-        public class KLedgeMechanism : KLedgeInterface
-        {
-            public KLedgeMechanism(KLnode source, KLnode target, List<Face2> faces, KLdof dof, KLcontactType contacType,
-                int id)
-                : base(source, target, dof, contacType, id)
-            {
-            }
-        }
-
+        
         #endregion
 
         #region Component type
@@ -910,499 +873,5 @@ namespace AssemblyRetrieval.Graph
             }
             return componentType;
         }
-
-
-        public static List<KLedgeContact> GetEquivalentClassesOfCylindricalContact(
-            AdjacencyGraph<KLnode, KLedge> startingGraph, KLnode partOfSubAss, SldWorks SwApplication)
-        {
-            var outJointPartList = new List<KLedgeContact>();
-            var allOutJointPartList = new List<KLedge>();
-            var equivalentContactList = new List<KLedgeContact>();
-
-            allOutJointPartList = (KLgraph.GetIncidentArcsForType(startingGraph, partOfSubAss,
-                typeof(KLgraph.KLedgeContact)));
-
-            if (allOutJointPartList.Any())
-            {
-                outJointPartList.AddRange(allOutJointPartList.Cast<KLgraph.KLedgeContact>().ToList());
-            }
-
-            //if (partOfSubAss.Name.Contains("Part.Chapeau"))
-            //{
-            //var toPrint = "";
-            //foreach (var kLedge in outJointPartList)
-            //{
-            //    toPrint += kLedge.Source.ComponentPath + " - " + kLedge.Target.ComponentPath;
-            //}
-            //SwApplication.SendMsgToUser(KLgraph.GetIncidentArcsForType(startingGraph, partOfSubAss,
-            //typeof(KLgraph.KLedgeContact)).Count.ToString());
-            //}
-
-            if (outJointPartList.Any())
-            {
-                outJointPartList = outJointPartList.FindAll(
-                    edge => edge.FaceContacType == KLgraph.KLfaceContactType.Cylinder);
-            }
-
-            foreach (KLedgeContact contact in outJointPartList)
-            {
-                var isEquivalent =
-                    equivalentContactList.Find(
-                        edge =>
-                            (Math.Abs(edge.Radius - contact.Radius) < 0.001 &&
-                             ((edge.Dof.Rotation.First())).Equals(contact.Dof.Rotation.First())));
-
-                //if (isEquivalent == null)
-                {
-                    var otherContact = contact.GetOtherVertex(partOfSubAss);
-                    if (!otherContact.Name.Contains("ArretSortie") && !otherContact.Name.Contains("ArretEntr"))
-                    {
-                        equivalentContactList.Add(contact);
-                    }
-                }
-            }
-            //if (partOfSubAss.Name.Contains("PRT_RoulementEntree"))
-            //{
-            //    SwApplication.SendMsgToUser(outJointPartList.Count + "  " + equivalentContactList.Count);
-            //}
-            return equivalentContactList;
-        }
-
-        public static List<KLedge> GetIncidentArcsForType(AdjacencyGraph<KLnode, KLedge> startingGraph,
-            KLnode partOfSubAss, Type type)
-        {
-            var outJointPartList = new List<KLedge>();
-            IEnumerable<KLedge> outInterferencesSupport;
-            IEnumerable<KLedge> inInterferencesSupport;
-
-            foreach (var node in startingGraph.Vertices)
-            {
-                startingGraph.TryGetEdges(node, partOfSubAss, out outInterferencesSupport);
-
-                foreach (KLgraph.KLedge outedge in outInterferencesSupport)
-                {
-                    outJointPartList.Add(outedge);
-                }
-
-                startingGraph.TryGetEdges(partOfSubAss, node, out inInterferencesSupport);
-
-                foreach (KLgraph.KLedge inedge in inInterferencesSupport)
-                {
-                    outJointPartList.Add(inedge);
-                }
-            }
-
-            outJointPartList.RemoveAll(arc => arc.GetType() != type);
-            return outJointPartList;
-        }
-
-        public static List<KLedge> GetIncidentArcs(AdjacencyGraph<KLnode, KLedge> startingGraph, KLnode partOfSubAss)
-        {
-            var outJointPartList = new List<KLedge>();
-            IEnumerable<KLedge> outInterferencesSupport;
-            IEnumerable<KLedge> inInterferencesSupport;
-
-
-            foreach (var node in startingGraph.Vertices)
-            {
-                startingGraph.TryGetEdges(node, partOfSubAss, out outInterferencesSupport);
-                outJointPartList.AddRange(outInterferencesSupport);
-
-                startingGraph.TryGetEdges(partOfSubAss, node, out inInterferencesSupport);
-                outJointPartList.AddRange(inInterferencesSupport);
-            }
-            return outJointPartList;
-        }
-
-
-        public static List<KLedge> GetArcsBetweenNodes(AdjacencyGraph<KLnode, KLedge> originalGraph, KLnode firstOriginalNode,
-            KLnode firstComparisonNode)
-        {
-            // Don't remove the oppositeEdge. Even if klEdge is undirect, the graph is an adjacent graph,
-            // thus it is not able to retrieve the edges between nodes without considering the directcion!
-            IEnumerable<KLgraph.KLedge> oedgeFirst;
-            IEnumerable<KLgraph.KLedge> oedgeFirstOpposite;
-
-            originalGraph.TryGetEdges(firstOriginalNode, firstComparisonNode,
-                out oedgeFirst);
-            originalGraph.TryGetEdges(firstComparisonNode, firstOriginalNode,
-                out oedgeFirstOpposite);
-
-            var arcListFirstGraph = new List<KLgraph.KLedge>();
-            arcListFirstGraph.AddRange(oedgeFirstOpposite);
-            arcListFirstGraph.AddRange(oedgeFirst);
-            return arcListFirstGraph;
-        }
-
-        public static List<KLnode> GetAdjacentNodesForEdgeType(AdjacencyGraph<KLnode, KLedge> startingGraph,
-            KLnode partOfSubAss, Type edgeType)
-        {
-            var outJointPartList = new List<KLnode>();
-            IEnumerable<KLedge> outInterferencesSupport;
-            IEnumerable<KLedge> inInterferencesSupport;
-
-            foreach (var node in startingGraph.Vertices)
-            {
-                startingGraph.TryGetEdges(node, partOfSubAss, out outInterferencesSupport);
-
-                foreach (KLgraph.KLedge outedge in outInterferencesSupport)
-                {
-                    if (outedge.GetType() == edgeType)
-                    {
-                        var adjacentNode = outedge.GetOtherVertex(partOfSubAss);
-                        outJointPartList.Add(adjacentNode);
-                    }
-                }
-
-
-                startingGraph.TryGetEdges(partOfSubAss, node, out inInterferencesSupport);
-
-                foreach (KLgraph.KLedge inedge in inInterferencesSupport)
-                {
-                    if (inedge.GetType() == edgeType)
-                    {
-                        var adjacentNode = inedge.GetOtherVertex(partOfSubAss);
-                        outJointPartList.Add(adjacentNode);
-                    }
-                }
-            }
-            return outJointPartList;
-        }
-
-        public static List<KLnode> GetAdjacentNodes(AdjacencyGraph<KLnode, KLedge> startingGraph, KLnode partOfSubAss)
-        {
-            var outJointPartList = new List<KLnode>();
-            IEnumerable<KLedge> outInterferencesSupport;
-            IEnumerable<KLedge> inInterferencesSupport;
-
-
-            foreach (var node in startingGraph.Vertices)
-            {
-                startingGraph.TryGetEdges(node, partOfSubAss, out outInterferencesSupport);
-
-                foreach (KLgraph.KLedge outedge in outInterferencesSupport)
-                {
-                    var adjacentNode = outedge.GetOtherVertex(partOfSubAss);
-                    outJointPartList.Add(adjacentNode);
-                }
-
-
-                startingGraph.TryGetEdges(partOfSubAss, node, out inInterferencesSupport);
-
-                foreach (KLgraph.KLedge inedge in inInterferencesSupport)
-                {
-                    var adjacentNode = inedge.GetOtherVertex(partOfSubAss);
-                    outJointPartList.Add(adjacentNode);
-                }
-            }
-            return outJointPartList;
-        }
-
-        public static void GetSubGraphFromVertices(AdjacencyGraph<KLnode, KLedge> graph,
-            ref AdjacencyGraph<KLnode, KLedge> subGraph)
-        {
-            foreach (var node in subGraph.Vertices)
-            {
-                foreach (var node2 in subGraph.Vertices)
-                {
-                    IEnumerable<KLedge> outEdges;
-                    graph.TryGetEdges(node, node2, out outEdges);
-
-                    foreach (KLedge edge in outEdges)
-                    {
-                        if (!subGraph.ContainsEdge(edge))
-                        {
-                            subGraph.AddEdge(edge);
-                        }
-                    }
-
-                    IEnumerable<KLedge> outEdgesOpposite;
-                    graph.TryGetEdges(node2, node, out outEdgesOpposite);
-
-                    foreach (KLedge edge in outEdgesOpposite)
-                    {
-                        if (!subGraph.ContainsEdge(edge))
-                        {
-                            subGraph.AddEdge(edge);
-                        }
-                    }
-                }
-            }
-        }
-        
-        /*
-        public static MyVertex GetNodeCentroid(AdjacencyGraph<KLnode, KLedge> graph, string nodeName)
-        {
-            var queryRoot = (KLgraph.KLnodeAssembly)graph.Vertices.First();
-            foreach (var instance in queryRoot.Instances)
-            {
-                var repComponent = instance.ListOfMyComponent.Find(repComp => repComp.Name == nodeName);
-                if (repComponent != null)
-                {
-                    var firstCentroid = repComponent.Origin;
-                    return firstCentroid;
-                }
-            }
-
-            return null;
-        }
-
-        public static MyVertex GetNodeCentroid(KLnodeAssembly root, string nodeName)
-        {
-            foreach (var instance in root.Instances)
-            {
-                var repComponent = instance.ListOfMyComponent.Find(repComp => repComp.Name == nodeName);
-                if (repComponent != null)
-                {
-                    var firstCentroid = repComponent.Origin;
-                    return firstCentroid;
-                }
-            }
-
-            return null;
-        }
-
-      */
-        #region Equivalent DelegateNode commputation
-
-        public class EquivalentNode
-        {
-            protected bool Equals(EquivalentNode other)
-            {
-                return Equals(DelegateNode, other.DelegateNode) || NodesOfThisClass.Contains(other.DelegateNode);
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
-                return Equals((EquivalentNode) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return (DelegateNode != null ? DelegateNode.GetHashCode() : 0);
-            }
-
-            public KLnode DelegateNode;
-            public List<KLnode> NodesOfThisClass = new List<KLnode>();
-            public List<KLnode> Joint = new List<KLnode>();
-
-
-            public EquivalentNode()
-            {
-            }
-
-            public EquivalentNode(KLnode delegateNode, List<KLnode> joint)
-            {
-                DelegateNode = delegateNode;
-                Joint = joint;
-                NodesOfThisClass.Add(delegateNode);
-            }
-
-            public bool IsEquivalentNode(EquivalentNode otherNode)
-            {
-                var jointCopy = new List<KLnode>();
-                jointCopy.AddRange(Joint);
-                var otherJointCopy = new List<KLnode>();
-                otherJointCopy.AddRange(otherNode.Joint);
-
-                foreach (var thisNode in Joint)
-                {
-                    var correspondingJoint = (KLnode) otherJointCopy.Find(n => n.Equals(thisNode));
-                    if (correspondingJoint != null)
-                    {
-                        jointCopy.Remove(thisNode);
-                        otherJointCopy.Remove(correspondingJoint);
-                    }
-                }
-
-                if (!jointCopy.Any() && !otherJointCopy.Any())
-                {
-                    return true;
-                }
-
-                return false;
-            }
-        }
-
-        public class JointsRepeatedParts
-        {
-            protected bool Equals(JointsRepeatedParts other)
-            {
-                return Equals(Node, other.Node);
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
-                return Equals((JointsRepeatedParts) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return (Node != null ? Node.GetHashCode() : 0);
-            }
-
-            public KLnode Node;
-            public int Repetition;
-
-            public JointsRepeatedParts()
-            {
-            }
-
-            public JointsRepeatedParts(KLnode node, int repetition)
-            {
-                Node = node;
-                Repetition = repetition;
-            }
-        }
-
-        #endregion
-
-        /*
-        public static List<KLnodePart> GetBearingAsPart(
-            AdjacencyGraph<KLnode, KLedge> storedGraph, List<KLnode> nodeList,
-            out int totalRoulement)
-        {
-            totalRoulement = 0;
-            // Rimuovo i nodi che non sono parti
-            nodeList.RemoveAll(node => node.GetType() != typeof(KLgraph.KLnodePart));
-            var partList = new List<KLnodePart>(nodeList.Cast<KLgraph.KLnodePart>());
-
-            partList.RemoveAll(node => node.Name.Contains("Circlips"));
-
-            // Rimuovo i nodi con genere diverso da 1
-            partList.RemoveAll(part => part.KLstatistic.Genus != 1);
-
-            // Rimuovo i nodi che non hanno esattamente due contatti cilindrici con la stessa superficie
-            // questo implicata che i contatti possono essere anche tre, ma le sup solo 2.
-            //partList.RemoveAll(
-            //    part =>
-            //        ((((KLgraph.GetIncidentArcsForType(storedGraph, part,
-            //            typeof (KLgraph.KLedgeContact)))
-            //            .Cast<KLgraph.KLedgeContact>().ToList()).Where(
-            //                edge => edge.FaceContacType == KLgraph.KLfaceContactType.Cylinder))
-            //            .Count()) !=
-            //        2);
-
-            //SwTaskPaneHost.SwApplication.SendMsgToUser("Calcolo equivalenze " + partList.Count);
-            partList.RemoveAll(
-                part =>
-                    KLgraph.GetEquivalentClassesOfCylindricalContact(storedGraph, part, SwTaskPaneHost.SwApplication)
-                        .Count != 2);
-            //SwTaskPaneHost.SwApplication.SendMsgToUser("Equivalenze " + partList.Count);
-
-            // I contatti cilindrici devono appartenere a due parti diverse (che non siano c-clips, dovrebbero essere eliminate prima)
-            // e avere raggio diverso
-            var partListCopy = new List<KLnodePart>(partList);
-            foreach (var part in partListCopy)
-            {
-                var arcs = new List<KLedgeContact>();
-                //arcs.AddRange(
-                //    (((KLgraph.GetIncidentArcsForType(storedGraph, part,
-                //        typeof (KLgraph.KLedgeContact)))
-                //        .Cast<KLgraph.KLedgeContact>().ToList()).Where(
-                //            edge => edge.FaceContacType == KLgraph.KLfaceContactType.Cylinder)));
-                arcs.AddRange(
-                    KLgraph.GetEquivalentClassesOfCylindricalContact(storedGraph, part, SwTaskPaneHost.SwApplication)
-                        .Cast<KLgraph.KLedgeContact>());
-
-                var firstDestination = arcs[0].GetOtherVertex((KLgraph.KLnode) part);
-                var secondDestination = arcs[1].GetOtherVertex((KLgraph.KLnode) part);
-                IEnumerable<KLedge> outedge;
-                IEnumerable<KLedge> inedge;
-
-                storedGraph.TryGetEdges(firstDestination, secondDestination, out outedge);
-                storedGraph.TryGetEdges(secondDestination, firstDestination, out inedge);
-
-                var edgeBetweenExternalParts = new List<KLedge>();
-                edgeBetweenExternalParts.AddRange(outedge);
-                edgeBetweenExternalParts.AddRange(inedge);
-
-                if (firstDestination.Equals(secondDestination) ||
-                    firstDestination.Name.Contains("Circlip") ||
-                    firstDestination.Name.Contains("ArretSortie") ||
-                    firstDestination.Name.Contains("ArretEntr") ||
-                    secondDestination.Name.Contains("Circlip") ||
-                    secondDestination.Name.Contains("ArretSortie") ||
-                    secondDestination.Name.Contains("ArretEntr"))
-                {
-                    partList.Remove(part);
-                }
-                else if (edgeBetweenExternalParts.Any())
-                {
-                    partList.Remove(part);
-                }
-                else
-                {
-                    if (Math.Abs(arcs[0].Radius - arcs[1].Radius) > 0.001)
-                    {
-                        // Prima lo usavo per colorare la parte, ma ora l'identificazione non sfrutta questa colorazione
-
-                        //var partComponent = componentList.Find(comp => comp.Name2 == part.Name);
-                        //if (partComponent != null)
-                        //{
-                        //    Utility.ColorModel.KLColorPart(modelDoc, partComponent, 1);
-                        //}
-                        //else
-                        //{
-                        //    SwTaskPaneHost.SwApplication.SendMsgToUser("Parte non colorata");
-                        //}
-                    }
-                    else
-                    {
-                        partList.Remove(part);
-                    }
-                }
-            }
-            return partList;
-        }
-
-        public static List<KLnode> GetListOfChildrenOfAssemblyNode(KLgraph.KLnodeAssembly testAssembly, AdjacencyGraph<KLgraph.KLnode, KLgraph.KLedge> graph, string modelId = "")
-        {
-                    var conn = new MySqlConnection("SERVER=localhost;database=imati;uid=IMATI;password=@partclassifier2017");
-                    conn.Open();
-
-            var nodeList = new List<KLnode>();
-            IEnumerable<KLgraph.KLedge> outSubEdges;
-            graph.TryGetOutEdges(testAssembly, out outSubEdges);
-            foreach (var outEdge in outSubEdges)
-            {
-                if (outEdge.GetType() == typeof(KLgraph.KLedgeStructure))
-                {
-                    var targetNode = outEdge.Target;
-
-                    Regex rgx = new Regex("[^a-zA-Z0-9]");
-                    var nodeCategory = "";
-                    var comparisonNodeNameDB =
-                        targetNode.Name.Substring(0, targetNode.Name.LastIndexOf('-')).Split('/').Last();
-                    comparisonNodeNameDB = rgx.Replace(comparisonNodeNameDB, "");
-                    comparisonNodeNameDB.Replace("'", "''");
-                    comparisonNodeNameDB.Replace(" ", String.Empty);
-
-                    var query = String.Format("SELECT * FROM am_{0} where NewName LIKE \"{1}\"", modelId,
-                        comparisonNodeNameDB);
-                    var queryCmd = new MySqlCommand(query, conn);
-
-                    var readerQuery = queryCmd.ExecuteReader();
-                    while (readerQuery != null && readerQuery.Read())
-                    {
-                        nodeCategory = readerQuery["Category"].ToString();
-                    }
-                    readerQuery.Close();
-                    var componentType = KLgraph.GetComponentTypeEquivalentNameInDb(nodeCategory);
-                    targetNode.ComponentType = componentType;
-
-
-                    nodeList.Add(targetNode);
-                }
-            }
-            return nodeList;
-        }
-        */
     }
 }

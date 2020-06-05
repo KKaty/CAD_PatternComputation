@@ -7,6 +7,7 @@ CAD_PatternComputation needs to be built referring the following SolidWorks depe
 * SolidWorks.Interop.sldworks.dll
 * SolidWorks.Interop.swconst.dll
 and adding (by NuGet) the following packages:
+*QuickGraph
 *Newtonsoft.Json
 *Accord.Math
 

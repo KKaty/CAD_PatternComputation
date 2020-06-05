@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 {
@@ -16,7 +14,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool GetPatternsFromPath_Assembly(MyPathOfPoints myPathOfPoints,
             List<MyRepeatedComponent> listOfComponents, ref List<MyPathOfPoints> listOfPathOfPoints,
             ref List<MyMatrAdj> listOfMatrAdj, ref List<MyPatternOfComponents> listOfOutputPattern,
-            ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
 
             var listOfOriginsOnThePath = listOfComponents.Select(re => re.Origin).ToList();
@@ -27,10 +25,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             if (myPathOfPoints.pathGeometricObject.GetType() == typeof (MyLine))
             {
                 const string nameFile = "GetTranslationalPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE retta. AVVIO", nameFile);
-
-                SwApplication.SendMsgToUser("traslazione vecchia");
+                
                 return GetPatternsFromLinearPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
                     ref listOfPathOfPoints, listOfOriginsOnThePath, ref listOfMatrAdj,
                     ref listOfOutputPattern, ref listOfOutputPatternTwo);
@@ -38,14 +33,10 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             else
             {
                 const string nameFile = "GetCircularPatterns.txt";
-                KLdebug.Print(" ", nameFile);
-                KLdebug.Print("POSSIBILE TRASLAZIONE o ROTAZIONE su circonferenza. AVVIO", nameFile);
-
-                SwApplication.SendMsgToUser("tras circ vecchia");
-
+                
                 return GetPatternsFromCircularPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
                     ref listOfPathOfPoints, listOfOriginsOnThePath, ref listOfMatrAdj,
-                    ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication);
+                    ref listOfOutputPattern, ref listOfOutputPatternTwo);
             }
         }
 
@@ -53,7 +44,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool KLGetPatternsFromPath_Assembly(MyPathOfPoints myPathOfPoints,
             List<MyRepeatedComponent> listOfComponents, List<MyVertex> listOfOriginsOnThePath, ref List<MyPathOfPoints> listOfPathOfPoints,
             ref List<MyMatrAdj> listOfMatrAdj, ref List<MyPatternOfComponents> listOfOutputPattern,
-            ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             if (myPathOfPoints != null)
             {
@@ -90,7 +81,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                         //KLdebug.Print("POSSIBILE TRASLAZIONE retta. AVVIO", nameFile);
                         return KLGetPatternsFromLinearPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
                             ref listOfPathOfPoints, listOfOriginsOnThePath, ref listOfMatrAdj,
-                            ref listOfOutputPattern, ref listOfOutputPatternTwo, SwApplication);
+                            ref listOfOutputPattern, ref listOfOutputPatternTwo);
                 
                     }
                     else
@@ -101,7 +92,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                         //KLdebug.Print("POSSIBILE TRASLAZIONE o ROTAZIONE su circonferenza. AVVIO", nameFile);
                         return KLGetPatternsFromCircularPath_Assembly(listOfComponentsOnThePath, myPathOfPoints.pathGeometricObject,
                             ref listOfPathOfPoints, listOfOriginsOnThePath, ref listOfMatrAdj,
-                            ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication);
+                            ref listOfOutputPattern, ref listOfOutputPatternTwo);
                     }
                 }
             }
@@ -122,10 +113,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
             var noStop = true;
 
-            const string nameFile = "GetTranslationalPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("VERIFICA DELLE POSSIBILI TRASLAZIONI TRA " + numOfCompOnThisPath + " COMPONENTS:", nameFile);
-            KLdebug.Print(" ", nameFile);
 
             var i = 0;
             while (i < (numOfCompOnThisPath - 1))
@@ -147,12 +134,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                         ref listOfOutputPattern, ref listOfOutputPatternTwo);
                 }
             }
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
 
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;
@@ -161,7 +145,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool KLGetPatternsFromLinearPath_Assembly(List<MyRepeatedComponent> listOfComponentsOnThePath,
             MyPathGeometricObject pathObject, ref List<MyPathOfPoints> listOfPathOfPoints,
             List<MyVertex> listOfOrigins, ref List<MyMatrAdj> listOfMatrAdj,
-            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, SldWorks swApplication)
+            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             // Se non uso listOfComponentsOnThePath probabilmente dovrò aggiornare listOfOrigins con il numero effettivo di elementi che appartengono al pattern selezionato.
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
@@ -179,7 +163,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
             {
                 var newPattern = new MyPatternOfComponents();
                 var foundNewPattern = KLGetMaximumTranslation_Assembly(listOfComponentsOnThePath, pathObject, ref i, ref numOfCompOnThisPath,
-                    ref noStop, ref newPattern, swApplication);
+                    ref noStop, ref newPattern);
 
                 if (foundNewPattern)
                 {
@@ -190,9 +174,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                     }
 
                     var listREofRcomponents = new List<MyRepeatedEntity>(listOfComponentsOnThePath.Select(comp => comp.RepeatedEntity).ToList());
-                    var listGS = new List<Surface>();
+                    //var listGS = new List<Surface>();
                     var newPatternPoint = new MyPattern(listREofRcomponents, newPattern.pathOfMyPattern,
-                        newPattern.typeOfMyPattern, listGS);
+                        newPattern.typeOfMyPattern);
                     
                     KLCheckAndUpdate_Assembly(newPattern, ref listOfPathOfPoints,
                         listOfOrigins, ref listOfMatrAdj,
@@ -213,18 +197,13 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool  GetPatternsFromCircularPath_Assembly(List<MyRepeatedComponent> listOfComponentsOnThePath,
             MyPathGeometricObject pathObject, ref List<MyPathOfPoints> listOfPathOfPoints,
             List<MyVertex> listOfOrigins, ref List<MyMatrAdj> listOfMatrAdj,
-            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
             var noStop = true;
 
             const string nameFile = "GetCircularPatterns.txt";
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print(
-                "VERIFICA DELLE POSSIBILI TRASLAZIONI SU CIRCONFERENZA O ROTAZIONI TRA " + numOfCompOnThisPath + " COMPONENTS:",
-                nameFile);
-            KLdebug.Print(" ", nameFile);
-
+            
             var i = 0;
             while (i < (numOfCompOnThisPath - 1))
             {
@@ -235,10 +214,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
 
                 if (foundNewPattern == false)
                 {
-                    SwApplication.SendMsgToUser("pathCircumference vecchio");
                     var pathCircumference = (MyCircumForPath)pathObject;
                     foundNewPattern = GetMaximumRotation_Assembly(listOfComponentsOnThePath, pathCircumference, ref i, ref numOfCompOnThisPath,
-                        ref noStop, ref newPattern, SwModel, SwApplication);
+                        ref noStop, ref newPattern);
                 }
                 else
                 {
@@ -259,13 +237,9 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                 }
 
             }
-   
-            KLdebug.Print(" ", nameFile);
-            KLdebug.Print("FINE LISTA :) ", nameFile);
-    
+
             if (noStop)
             {
-                KLdebug.Print("NESSUNA INTERRUZIONE: PATTERN DI LUNGHEZZA MASSIMA SU QUESTO PATH!", nameFile);
                 return true;
             }
             return false;
@@ -275,7 +249,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
         public static bool KLGetPatternsFromCircularPath_Assembly(List<MyRepeatedComponent> listOfComponentsOnThePath,
            MyPathGeometricObject pathObject, ref List<MyPathOfPoints> listOfPathOfPoints,
            List<MyVertex> listOfOrigins, ref List<MyMatrAdj> listOfMatrAdj,
-           ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+           ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             var numOfCompOnThisPath = listOfComponentsOnThePath.Count;
             var noStop = true;
@@ -293,14 +267,14 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities
                 var newPattern = new MyPatternOfComponents();
                 var j = i;
                 var foundNewPattern = KLGetMaximumTranslation_Assembly(listOfComponentsOnThePath, pathObject, ref j, ref numOfCompOnThisPath,
-                    ref noStop, ref newPattern, SwApplication);
+                    ref noStop, ref newPattern);
                 if (foundNewPattern == false)
                 {
                     var pathCircumference = (MyCircumForPath) pathObject;
 
                     foundNewPattern = KLGetMaximumRotation_Assembly(listOfComponentsOnThePath, pathCircumference,
                         ref i, ref numOfCompOnThisPath,
-                        ref noStop, ref newPattern, SwModel, SwApplication);
+                        ref noStop, ref newPattern);
 
                 }
                 else

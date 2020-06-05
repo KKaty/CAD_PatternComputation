@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Text;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 {
@@ -11,7 +10,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
         public static bool FindPaths_Assembly(MyMatrAdj matrAdjToSee, List<MyRepeatedComponent> listOfComponents,
             ref StringBuilder fileOutput, out List<MyPathOfPoints> listOfPathsOfPoints, out bool onlyShortPaths,
             ref bool toleranceOk, ref List<MyMatrAdj> listOfMatrAdj,
-            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             int n = matrAdjToSee.matr.GetLength(0);
             bool longestPattern = false;
@@ -47,7 +46,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                     listOfOrigins, listOfExtremePoints, ref listOfSimplePoints_Copy, listOfMBPoints, 
                     ref longestPattern, ref listOfPaths, ref listOfPenultimate, ref listOfLast, ref fileOutput, 
                     ref toleranceOk, ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                    ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                    ref listOfIndicesOfLongestPath);
                 if (toleranceOk == false)
                 {
                     fileOutput.AppendLine("\n \n WARNING: the program has been interrupted.");
@@ -82,8 +81,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                     listOfOrigins, listOfExtremePoints,
                     ref listOfSimplePoints_Copy, listOfMBPoints, ref longestPattern, ref listOfPaths,
                     ref listOfPenultimate, ref listOfLast, ref fileOutput, ref toleranceOk,
-                    ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo, ref listOfIndicesOfLongestPath,
-                    SwModel, SwApplication);
+                    ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo, ref listOfIndicesOfLongestPath);
                 if (toleranceOk == false)
                 {
                     fileOutput.AppendLine("\n \n WARNING: the program has been interrupted.");
@@ -143,8 +141,6 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 
             while (numOfPenultimate + numOfSimple > 0)
             {
-                SwApplication.SendMsgToUser("numOfPenultimate " + listOfMBPoints_Copy.Count);
-
                 if (numOfPenultimate > 0)
                 {
                     // I look for a path with the first available "penultimate point" as StartPoint and I move towards of the relative "last point"
@@ -156,7 +152,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                         listOfOrigins, listOfExtremePoints, ref listOfSimplePoints_Copy, listOfMBPoints,
                         ref longestPattern, ref listOfPaths, ref listOfPenultimate, ref listOfLast, ref fileOutput,
                         ref toleranceOk, ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                        ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                        ref listOfIndicesOfLongestPath);
                
                     listOfPenultimate.Remove(startPointInd);
                     listOfLast.Remove(secondPointInd);
@@ -171,7 +167,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                         ref listOfSimplePoints_Copy, listOfMBPoints, ref longestPattern, ref listOfPaths,
                         ref listOfPenultimate, ref listOfLast, ref fileOutput, ref toleranceOk,
                         ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                        ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                        ref listOfIndicesOfLongestPath);
                 }
 
                 //Check if tolerance level is ok:
@@ -237,7 +233,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
         public static bool KLFindPaths_Assembly(MyMatrAdj matrAdjToSee, List<MyRepeatedComponent> listOfComponents, List<MyVertex> listOfOrigins,
             ref StringBuilder fileOutput, out List<MyPathOfPoints> listOfPathsOfPoints, out bool onlyShortPaths,
             ref bool toleranceOk, ref List<MyMatrAdj> listOfMatrAdj,
-            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo, ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPattern, ref List<MyPatternOfComponents> listOfOutputPatternTwo)
         {
             int n = matrAdjToSee.matr.GetLength(0);
             bool longestPattern = false;
@@ -271,7 +267,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                     listOfOrigins, listOfExtremePoints, ref listOfSimplePoints_Copy, listOfMBPoints,
                     ref longestPattern, ref listOfPaths, ref listOfPenultimate, ref listOfLast, ref fileOutput,
                     ref toleranceOk, ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                    ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                    ref listOfIndicesOfLongestPath);
 
                 if (toleranceOk == false)
                 {
@@ -308,8 +304,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                     listOfOrigins, listOfExtremePoints,
                     ref listOfSimplePoints_Copy, listOfMBPoints, ref longestPattern, ref listOfPaths,
                     ref listOfPenultimate, ref listOfLast, ref fileOutput, ref toleranceOk,
-                    ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo, ref listOfIndicesOfLongestPath,
-                    SwModel, SwApplication);
+                    ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo, ref listOfIndicesOfLongestPath);
 
                 if (toleranceOk == false)
                 {
@@ -382,7 +377,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                         listOfOrigins, listOfExtremePoints, ref listOfSimplePoints_Copy, listOfMBPoints,
                         ref longestPattern, ref listOfPaths, ref listOfPenultimate, ref listOfLast, ref fileOutput,
                         ref toleranceOk, ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                        ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                        ref listOfIndicesOfLongestPath);
 
                     listOfPenultimate.Remove(startPointInd);
                     listOfLast.Remove(secondPointInd);
@@ -398,7 +393,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                         ref listOfSimplePoints_Copy, listOfMBPoints, ref longestPattern, ref listOfPaths,
                         ref listOfPenultimate, ref listOfLast, ref fileOutput, ref toleranceOk,
                         ref listOfMatrAdj, ref listOfOutputPattern, ref listOfOutputPatternTwo,
-                        ref listOfIndicesOfLongestPath, SwModel, SwApplication);
+                        ref listOfIndicesOfLongestPath);
 
                 }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
 {
@@ -11,7 +10,6 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
     [JsonObject ("RepeatedComponent")]
     public class MyRepeatedComponent
     {
-        [JsonIgnore] public Component2 Component;
         [JsonProperty("Name")] public String Name;
         [JsonProperty("IdCorrespondingNode")] public int IdCorrespondingNode;
         [JsonIgnore] public MyTransformMatrix Transform;
@@ -24,42 +22,6 @@ namespace AssemblyRetrieval.PatternLisa.ClassesOfObjects
         {
         }
 
-        public MyRepeatedComponent(Component2 component, MyTransformMatrix transform, bool isLeaf, MyRepeatedEntity repeatedEntity)
-        {
-            this.Component = component;
-            var pathComponent = component.Name2;
-            var componentName = pathComponent.Split('/').Last();
-            Name = componentName;
-            this.Transform = transform;
-            this.IsLeaf = isLeaf;
-
-            var originVertex = new MyVertex(transform.TranslationVector[0], transform.TranslationVector[1],
-                transform.TranslationVector[2]);
-
-
-            this.Origin = originVertex;
-            RepeatedEntity = repeatedEntity;
-
-            IsSphere = false;
-        }
-
-        public MyRepeatedComponent(Component2 component, int idCorrespondingNode, MyTransformMatrix transform, bool isLeaf, MyRepeatedEntity repeatedEntity)
-        {
-            this.Component = component;
-            Name = component.Name2;
-            IdCorrespondingNode = idCorrespondingNode;
-            this.Transform = transform;
-            this.IsLeaf = isLeaf;
-      
-            var originVertex = new MyVertex(transform.TranslationVector[0], transform.TranslationVector[1],
-               transform.TranslationVector[2]);
-          
-                
-            this.Origin = originVertex;
-            RepeatedEntity = repeatedEntity;
-
-            IsSphere = false;
-        }
     }
 
 

@@ -4,7 +4,6 @@ using System.Text;
 using Accord.Math;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
 using AssemblyRetrieval.PatternLisa.GeometricUtilities;
-using SolidWorks.Interop.sldworks;
 using GeometryAnalysis = AssemblyRetrieval.PatternLisa.Assembly.AssemblyUtilities.GeometryAnalysis;
 
 namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
@@ -19,8 +18,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
             ref bool longestPattern, ref List<MyPathOfPoints> listOfPaths, ref List<int> listOfPenultimate,
             ref List<int> listOfLast, ref StringBuilder fileOutput, ref bool toleranceOk,
             ref List<MyMatrAdj> listOfMatrAdj, ref List<MyPatternOfComponents> listOfOutputPattern,
-            ref List<MyPatternOfComponents> listOfOutputPatternTwo, ref List<int> listOfIndicesOfLongestPath, 
-            ModelDoc2 SwModel, SldWorks SwApplication)
+            ref List<MyPatternOfComponents> listOfOutputPatternTwo, ref List<int> listOfIndicesOfLongestPath)
 
          {
             if (listOfExtremePoints.Contains(secondPointInd))
@@ -103,7 +101,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 
                             if (GeometryAnalysis.GetPatternsFromPath_Assembly(newMyPathOfPoints, listOfComponents,
                                 ref listOfPaths, ref listOfMatrAdj,
-                                ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication))
+                                ref listOfOutputPattern, ref listOfOutputPatternTwo))
                             {
                                 longestPattern = true;
                                 return;
@@ -196,7 +194,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 
                             if (GeometryAnalysis.GetPatternsFromPath_Assembly(newMyPathOfPoints, listOfComponents,
                                 ref listOfPaths, ref listOfMatrAdj,
-                                ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication))
+                                ref listOfOutputPattern, ref listOfOutputPatternTwo))
                             {
                                 longestPattern = true;
                                 return;
@@ -233,8 +231,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
     ref bool longestPattern, ref List<MyPathOfPoints> listOfPaths, ref List<int> listOfPenultimate,
     ref List<int> listOfLast, ref StringBuilder fileOutput, ref bool toleranceOk,
     ref List<MyMatrAdj> listOfMatrAdj, ref List<MyPatternOfComponents> listOfOutputPattern,
-    ref List<MyPatternOfComponents> listOfOutputPatternTwo, ref List<int> listOfIndicesOfLongestPath,
-    ModelDoc2 SwModel, SldWorks SwApplication)
+    ref List<MyPatternOfComponents> listOfOutputPatternTwo, ref List<int> listOfIndicesOfLongestPath)
         {
             if (listOfExtremePoints.Contains(secondPointInd))
             //If the branch is an ExtremePoint, I treat it in a special way as I have not 
@@ -267,7 +264,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
                         {
                             currentPath = Part.PathCreation_Part.Functions.ThreePointsGivenPathsCircum(matrAdjToSee, listOfOrigins,
                                 listOfExtremePoints, secondPointInd, startPointInd, branch2,
-                                ref fileOutput, ref toleranceOk, out pathCurve, SwModel, SwApplication);
+                                ref fileOutput, ref toleranceOk, out pathCurve);
 
 
                             // Notice that expansion will procede only in one direction
@@ -319,7 +316,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 
                             if (GeometryAnalysis.KLGetPatternsFromPath_Assembly(newMyPathOfPoints, listOfComponents, listOfOrigins,
                                 ref listOfPaths, ref listOfMatrAdj,
-                                ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication))
+                                ref listOfOutputPattern, ref listOfOutputPatternTwo))
                             {
                                 longestPattern = true;
                                 return;
@@ -412,7 +409,7 @@ namespace AssemblyRetrieval.PatternLisa.Assembly.PathCreation_Assembly
 
                             if (GeometryAnalysis.KLGetPatternsFromPath_Assembly(newMyPathOfPoints, listOfComponents, listOfOrigins,
                                 ref listOfPaths, ref listOfMatrAdj,
-                                ref listOfOutputPattern, ref listOfOutputPatternTwo, SwModel, SwApplication))
+                                ref listOfOutputPattern, ref listOfOutputPatternTwo))
                             {
                                 longestPattern = true;
                                 return;

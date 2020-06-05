@@ -1,14 +1,12 @@
 ﻿using System.Text;
-using AssemblyRetrieval.Debug;
 using AssemblyRetrieval.PatternLisa.ClassesOfObjects;
-using SolidWorks.Interop.sldworks;
 
 namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
 {
     public static partial class FunctionsLC
     {
         //Restituisce le equazioni cartesiane della circonferenza passante per V1, V2, V3
-        public static MyCircumForPath CircumPassingThrough(MyVertex V1, MyVertex V2, MyVertex V3, ref StringBuilder fileOutput, ModelDoc2 SwModel, SldWorks swApplication)
+        public static MyCircumForPath CircumPassingThrough(MyVertex V1, MyVertex V2, MyVertex V3, ref StringBuilder fileOutput)
         {
     
             //The circumference does not exist if the 3 points lie on the same line or if 2 of them are coincident.
@@ -41,13 +39,9 @@ namespace AssemblyRetrieval.PatternLisa.GeometricUtilities
                 //    SwModel.InsertSketch();
                 //}
 
-                MySphere CircumSphere = SpherePassingThrough(V1, V2, V3, V4, ref fileOutput, SwModel);
+                MySphere CircumSphere = SpherePassingThrough(V1, V2, V3, V4, ref fileOutput);
 
-                if (CircumSphere.centerSphere == null)
-                {
-                    KLdebug.Print("CircumSphere.centerSphere nullo", "CircumPassingThrough.txt");
-                }
-                else if (CircumSphere.centerSphere != null)
+                if (CircumSphere.centerSphere != null)
                 {
                     MyCircumForPath OutputCircum = new MyCircumForPath(CircumPlane, CircumSphere);
                     return OutputCircum;
